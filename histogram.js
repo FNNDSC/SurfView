@@ -61,13 +61,19 @@ function quicksort(array)
 	qsort(array, 0, array.length);
 }
 
-function arr_copy(arr_target) {
-	arr = [];
-	for(var i=0, len=arr_target.length; i<len; i++) {
-		arr[i] = arr_target[i];
+function arr_copy(arr_source, arr_target) {
+	arr_target = new Float32Array(arr_source.length);
+	for(var i=0, len=arr_source.length; i<len; i++) {
+		arr_target[i] = arr_source[i];
 	}
-	return arr;
+	return arr_target;
 };
+
+function Float32Array_copy(arr_target) {
+	var arr_copy = new Float32Array(arr_target.length);
+	arr_copy.set(arr_target);
+	return arr_copy;
+}
 
 /*
  * Filter an array between <f_min> and <f_max> by hardlimiting
@@ -88,6 +94,12 @@ Float32Array.prototype.swap = function(a, b)
 	var tmp=this[a];
 	this[a]=this[b];
 	this[b]=tmp;
+};
+
+Float32Array.prototype.copy = function() {
+	var acopy = new Float32Array(this.length);
+	acopy.set(this);
+	return acopy;
 };
 
 
@@ -115,7 +127,8 @@ Array.prototype.scale = function(f_scale) {
  */
 function histogram_calculate(arr_data, nbins) {
 	
-	var arr_sorted 	= arr_data.subarray(0);
+	//var arr_sorted 	= arr_data.subarray(0);
+	var arr_sorted 	= arr_data.copy();
 	quicksort(arr_sorted);
 	var f_min		= arr_sorted[0];
 	var f_max		= arr_sorted[arr_sorted.length-1];

@@ -132,6 +132,29 @@ _label = {
   	  label: '<undefined>' 
 };
 
+
+function renderSubject_set(astr_subject) {
+	// Set the internal S_render records to new subject and load new
+	// meshes / curvatures.
+	['lh', 'rh'].map(function(hemisphere) {
+		['functionCurvFile', 'functionCurvPath', 'labelPath',
+		 'surfaceMeshFile', 'surfaceMeshPath'].map(function(record) {
+			 console.log(hemi + record);
+			 S_render[hemisphere][record] = 
+				 subject_set(S_render[hemisphere][record], astr_subject);
+		 });
+		console.log(S_render);
+		hemi = hemi_select(hemisphere);
+		hemi.surface.file = hemi.render.surfaceMeshFile;
+		hemi.surface.scalars.file = hemi.render.functionCurvFile;
+		hemi.surface.modified();
+		hemi_infoUpdate(hemisphere, _curvLoader.curvFunc);
+	});
+	pageTitleElement = document.getElementById("title");
+	pageTitleElement.innerText = astr_subject;
+}
+
+
 function guiMesh_init(astr_hemi) {
 	hemi = hemi_select(astr_hemi);
     hemi.gui.mesh.folder = DATgui.addFolder(str_hemi + ' Hemisphere Mesh');
@@ -168,6 +191,7 @@ function guiMesh_init(astr_hemi) {
     hemi.gui.mesh.folder.open();
 }
 
+
 function guiCurvature_init(astr_hemi) {
 	hemi = hemi_select(astr_hemi);
 	hemi.gui.curvature.folder = DATgui.addFolder(str_hemi + 
@@ -203,6 +227,7 @@ function guiCurvature_init(astr_hemi) {
 	hemi.gui.curvature.folder.open();
 }
 
+
 function guiLabel_init(astr_hemi) {
 	  hemi = hemi_select(astr_hemi);
 	  hemi.gui.label.folder = DATgui.addFolder(str_hemi + ' Hemisphere Label');
@@ -214,7 +239,6 @@ function guiLabel_init(astr_hemi) {
         hemiLabel_act(astr_hemi, value);
 	  });      
 }
-
 
 //
 // Call back functions to service GUI-related events
@@ -259,6 +283,7 @@ function hemiCurvFunc_act(astr_hemi, value) {
     var oldMaxColor = hemi.surface.scalars.maxColor;
     
     // now we (re-)load the selected curvature file
+    hemi.surface.scalars.array = null;
     hemi.surface.scalars.file = hemi.render.functionCurvPath + 
     				curvatureFiles[_index] + '.crv';
 
@@ -287,16 +312,20 @@ function hemiCurvFunc_act(astr_hemi, value) {
 function hemiLabel_act(astr_hemi, value) {
 	hemi = hemi_select(astr_hemi);
 	hemi.surface.scalars.file = hemi.render.labelPath + value + '.label';
+	str_url = location.origin + '/' + hemi.surface.scalars.file;
 	hemi.surface.modified();
-	xrender.onShowtime = function() {
-     hemi_infoUpdate(astr_hemi, value);
-	};
+	if(!url_exists(str_url)) {alert(str_url + '\nNot found.');}
+	xrender.onShowtime = function() {};
 }
 
 // The GUI_build() is called just before the first rendering attempt, i.e.
 // after all the mesh and curvature files have been loaded.
 GUI_build = function() {
 
+	// A housekeeping static counter
+	if (typeof this._counter == 'undefined') this._counter = 0;
+	this._counter = this._counter + 1;
+	
 	// The available mesh types
 	meshTypes 	   = [ 'smoothwm',
 	          	       'inflated',
@@ -320,10 +349,13 @@ GUI_build = function() {
                        	S_render.lh.allCurvFile.K2,
                        	S_render.lh.allCurvFile.C ];
 
-	hemi_infoUpdate('Left',  _curvLoader.curvFunc);
-	hemi_infoUpdate('Right', _curvLoader.curvFunc);
+    if(this._counter == 1) {
+        console.log('INTIAL: updating hemi in onShowtime()');
+		hemi_infoUpdate('Left',  _curvLoader.curvFunc);
+		hemi_infoUpdate('Right', _curvLoader.curvFunc);
+	}
 
-	if (DATgui) {
+    if (DATgui) {
 		// if we already have a gui, destroy it
         // .. it will be re-created immediately
         DATgui.destroy();
@@ -341,19 +373,16 @@ GUI_build = function() {
     	      				'subjectName', subjectArr);
     _gui.subject.folder.open();
 
+    // 
+	// Subject selection callback
+	//
+	_gui.subject.nameCombobox.onChange(function(subjectName) {
+		renderSubject_set(subjectName);
+	});
+    
     ['Left', 'Right'].map( function(hemi) {
     	guiMesh_init(hemi);
       	guiCurvature_init(hemi);
       	guiLabel_init(hemi);
      });
-          
-     // 
-     // Subject selection callback
-     //
-     _gui.subject.nameCombobox.onChange(function(subjectName) {
-    	 var _index = subjectArr.indexOf(subjectName);
-    	 mesh.file = subjectName;
-    	 mesh.modified();
-	});
 };
- 

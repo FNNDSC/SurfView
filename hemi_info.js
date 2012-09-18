@@ -69,7 +69,8 @@ function hemi_infoUpdate(astr_hemi, curvFuncVal) {
     console.log('hemi_infoUpdate ' + astr_hemi);
     // We need to copy and then filter the scalars.array
     // according to the min/max values
-    var arr_scalars = hemi.surface.scalars.array.subarray(0);
+    //var arr_scalars = hemi.surface.scalars.array.subarray(0);
+    var arr_scalars = hemi.surface.scalars.array.copy();
     // Now bandpass filter between the min/max values of the 
     // thresholded values...
     var f_min = hemi.surface.scalars.min;
@@ -108,6 +109,5 @@ function hemi_infoUpdate(astr_hemi, curvFuncVal) {
     }
     // Now (re)draw the histogram 
     s_hist = histogram_calculate(arr_scalars, 100);
-    histogram_draw(astr_hemi + '_histogram', 
-    	    	   s_hist.arr_xy);
+    histogram_draw(astr_hemi + '_histogram', s_hist.arr_xy);
 }    

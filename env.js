@@ -67,6 +67,28 @@ hid = {
 };
 
 
+//
+// 	Change the <subject> part of an input directory path
+//	(in S_render convention) and return the path spec
+//  with new subject.
+//
+function subject_set(astr_path, astr_subject, aindex) {
+	var arr_dir = astr_path.split('/');
+	aindex = (typeof aindex == 'undefined') ? 1 : aindex;
+	arr_dir[aindex] = astr_subject;
+	return(arr_dir.join('/'));
+}
+
+//
+// Check if a file (URL) actually exists.
+//
+function url_exists(astr_url) {
+    var http = new XMLHttpRequest();
+    http.open('HEAD', astr_url, false);
+    http.send();
+    return http.status!=404;	
+}
+
 // A convenience function that returns GUI components relevant to
 // specific hemisphere
 //
@@ -78,13 +100,13 @@ function hemi_select(astr_hemi) {
   __gui = null;
   surface = null;
   switch(astr_hemi) {
-  case 'Left':
+  case 'Left': case 'lh':
        __gui = _gui.lh;
        str_hemi = 'Left';
        surface = S_mesh.lh;
        render = S_render.lh;
        break;
-  case 'Right':
+  case 'Right': case 'rh':
        __gui = _gui.rh;
        str_hemi = 'Right';
        surface = S_mesh.rh;
