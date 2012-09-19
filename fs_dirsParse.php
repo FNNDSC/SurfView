@@ -202,12 +202,13 @@
     	    $arr_subjectList[] = $entry->getFileName();
     	}
     }
-    if(empty($_REQUEST['subject'])) {
-    	$subject = $arr_subjectList[0];
-    }
     
     // sort the listing
     sort($arr_subjectList);
+
+    if(empty($_REQUEST['subject'])) {
+    	$subject = $arr_subjectList[0];
+    }
     // Convert the php array to a js array
     $jsArr_subjectList = json_encode($arr_subjectList);
 
