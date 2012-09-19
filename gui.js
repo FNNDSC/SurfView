@@ -428,7 +428,7 @@ GUI_build = function() {
     _gui.subject.folder = DATgui.addFolder('Subject');
     _gui.subject.nameCombobox = _gui.subject.folder.add(_subjectLoader, 
     	      				'subjectName', subjectArr);
-    _gui.subject.folder.open();
+    //_gui.subject.folder.open();
 
     // 
 	// Subject selection callback
