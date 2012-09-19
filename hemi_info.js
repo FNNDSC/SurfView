@@ -43,11 +43,11 @@ function hid_select(astr_hemi) {
   __htmlEl = null;
   console.log(astr_hemi);
   switch(astr_hemi) {
-  case 'Left':
+  case 'Left': case 'lh':
     __htmlEl = hid.lh;
     _str_id = 'lh_';
     break;
-  case 'Right':
+  case 'Right': case 'rh':
     __htmlEl = hid.rh;
     _str_id = 'rh_';
     break;
@@ -64,9 +64,19 @@ function hid_init(astr_hemi) {
 }
 
 function hemi_infoUpdate(astr_hemi, curvFuncVal) {
-    html = hid_select(astr_hemi);
+	// Due to mix and match between 'lh'/'Left' and 'rh'/'Right',
+	// we just need to consistently use 'Left' for 'lh' and 'Right' for 'rh'
+	switch(astr_hemi) {
+		case 'lh':	astr_hemi = 'Left';
+					break;
+		case 'rh':	astr_hemi = 'Right';
+					break;
+	}
+	
+	html = hid_select(astr_hemi);
     hemi = hemi_select(astr_hemi);
     console.log('hemi_infoUpdate ' + astr_hemi);
+    console.log(html);
     // We need to copy and then filter the scalars.array
     // according to the min/max values
     //var arr_scalars = hemi.surface.scalars.array.subarray(0);
