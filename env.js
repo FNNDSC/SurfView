@@ -80,6 +80,51 @@ function subject_set(astr_path, astr_subject, aindex) {
 }
 
 //
+// Change the curvature base file in the S_render object
+//
+function S_render_baseCurve_set(astr_hemi, astr_baseNew) {
+	var str_baseCurrent = S_render[astr_hemi]['surfaceCurv'];
+	var S_curvFile = S_render[astr_hemi]['allCurvFile'];
+	for(var rec in S_curvFile) {
+		if(S_curvFile.hasOwnProperty(rec)) {
+			S_curvFile[rec] = S_curvFile[rec].replace(str_baseCurrent, astr_baseNew);
+			console.log(S_curvFile[rec]);
+		}
+	}
+	S_render[astr_hemi]['functionCurvFile'] = 
+		S_render[astr_hemi]['functionCurvFile'].replace(str_baseCurrent, astr_baseNew);
+	S_render[astr_hemi]['surfaceCurv'] =
+		S_render[astr_hemi]['surfaceCurv'].replace(str_baseCurrent, astr_baseNew);
+	console.log(S_render);
+}
+
+//
+// Based on the S_render internals, return some initial position 
+// information.
+//
+function S_render_Xoffset(astr_hemi) {
+	// Make sure about the 'Left'/'lh' 'Right'/'rh' duality
+	switch(astr_hemi) {
+		case 'Left':	astr_hemi = 'lh'; break;
+		case 'Right':	astr_hemi = 'rh'; break;
+	}
+	var offset = 0;
+	switch(S_render[astr_hemi].surfaceMesh) {
+	case 'smoothwm':	offset = 0;
+						break;
+	case 'inflated':	offset = 40;
+						break;
+	case 'sphere':		offset = 100;
+						break;
+	case 'pial':		offset = 0;
+						break;
+	}
+	if(astr_hemi == 'Left' || astr_hemi == 'lh') offset = offset * -1;
+	return offset;
+}
+
+
+//
 // Check if a file (URL) actually exists.
 //
 function url_exists(astr_url) {
@@ -87,6 +132,27 @@ function url_exists(astr_url) {
     http.open('HEAD', astr_url, false);
     http.send();
     return http.status!=404;	
+}
+
+function url_accessAllowed(astr_url) {
+    var http = new XMLHttpRequest();
+    http.open('HEAD', astr_url, false);
+    http.send();
+    return http.status!=403;	
+}
+
+
+function Xfile_checkAccess(astr_file) {
+	str_url = location.origin + '/' + astr_file;
+	if(!url_exists(str_url)) {
+		alert(str_url + '\nNot found.');
+		return false;
+	}
+	if(!url_accessAllowed(str_url)) {
+		alert(str_url + '\nFile exists, but access is forbidded.');
+		return false;
+	}
+	return true;
 }
 
 // A convenience function that returns GUI components relevant to
