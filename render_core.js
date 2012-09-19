@@ -79,10 +79,10 @@ window.onload =  function() {
     xrender.init();
 
     S_mesh.lh = mesh_init(S_render.lh);
-    S_mesh.lh.transform.translateX(-40);
+    hemiPosition_act('lh', S_render_Xoffset('lh'), 'X');
     S_mesh.lh.scalars.interpolation = 1;
     S_mesh.rh = mesh_init(S_render.rh);
-    S_mesh.rh.transform.translateX(40);
+    hemiPosition_act('rh', S_render_Xoffset('rh'), 'X');
     S_mesh.rh.scalars.interpolation = 1;
     
     xrender.add(S_mesh.lh);
