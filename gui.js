@@ -255,7 +255,7 @@ function guiLabel_init(astr_hemi) {
 	  hemi = hemi_select(astr_hemi);
 	  hemi.gui.label.folder = DATgui.addFolder(str_hemi + ' Hemisphere Label');
 	  hemi.gui.label.textInput = hemi.gui.label.folder.add(_label, 'label');
-	  hemi.gui.label.folder.open();
+	  //hemi.gui.label.folder.open();
 
 	  hemi.gui.label.textInput.onFinishChange(function(value) {
         console.log('Servicing <' + astr_hemi + '> label field');
