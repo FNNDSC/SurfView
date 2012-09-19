@@ -68,6 +68,7 @@ _guiMesh = {
 
 _guiCurvature = {
 	    folder:					null,
+	    baseSurface:			null,
 	    funcCombobox:			null,
 	    minColorSelector:		null,
 	    maxColorSelector:		null,
@@ -113,7 +114,8 @@ _gui = {
 // Initial value of the subject drop down box
 _subjectLoader = {
 // First entry in the $arr_subjectList
-        subjectName: subjectArr[0]
+        //subjectName: subjectArr[0]
+		subjectName: subjectStart
 };
 
 // Initial value of the surface drop down box
@@ -122,12 +124,21 @@ _surfLoader = {
   surfMesh: 'inflated'
 };
 
+// Initial value of the curvature surface base
+_curvBase = {
+  // Default curvature base surface
+  base: 'smoothwm'
+};
+
+
 // Initial value of the curvature drop down box
 _curvLoader = {
   // Default Curvature Type to display
   curvFunc: 'H (mm&#x207b;&sup1;)'
 };
 
+
+// Initial value of the label text field
 _label = { 
   	  label: '<undefined>' 
 };
@@ -136,22 +147,28 @@ _label = {
 function renderSubject_set(astr_subject) {
 	// Set the internal S_render records to new subject and load new
 	// meshes / curvatures.
+	var pageTitle_update = true;
 	['lh', 'rh'].map(function(hemisphere) {
 		['functionCurvFile', 'functionCurvPath', 'labelPath',
 		 'surfaceMeshFile', 'surfaceMeshPath'].map(function(record) {
-			 console.log(hemi + record);
 			 S_render[hemisphere][record] = 
 				 subject_set(S_render[hemisphere][record], astr_subject);
 		 });
-		console.log(S_render);
+  		console.log(S_render);
 		hemi = hemi_select(hemisphere);
-		hemi.surface.file = hemi.render.surfaceMeshFile;
-		hemi.surface.scalars.file = hemi.render.functionCurvFile;
-		hemi.surface.modified();
-		hemi_infoUpdate(hemisphere, _curvLoader.curvFunc);
+		var str_surfaceFile = hemi.render.surfaceMeshFile;
+		var str_scalarFile = hemi.render.functionCurvFile;
+		if(Xfile_checkAccess(str_surfaceFile) && Xfile_checkAccess(str_scalarFile)) {
+			hemi.surface.file = hemi.render.surfaceMeshFile;
+			hemi.surface.scalars.file = hemi.render.functionCurvFile;
+			hemi.surface.modified();
+			hemi_infoUpdate(hemisphere, _curvLoader.curvFunc);
+		} else pageTitle_update = false;
 	});
-	pageTitleElement = document.getElementById("title");
-	pageTitleElement.innerText = astr_subject;
+	if(pageTitle_update) {
+		pageTitleElement = document.getElementById("title");
+		pageTitleElement.innerText = astr_subject;
+	}
 }
 
 
@@ -188,7 +205,7 @@ function guiMesh_init(astr_hemi) {
 			});
     hemi.gui.mesh.colorSelector = hemi.gui.mesh.folder.addColor(
 		  				hemi.surface, 'color');    
-    hemi.gui.mesh.folder.open();
+    //hemi.gui.mesh.folder.open();
 }
 
 
@@ -196,6 +213,12 @@ function guiCurvature_init(astr_hemi) {
 	hemi = hemi_select(astr_hemi);
 	hemi.gui.curvature.folder = DATgui.addFolder(str_hemi + 
 	      	  				' Hemisphere Curvature');
+	hemi.gui.curvature.baseSurface = hemi.gui.curvature.folder.add(
+							_curvBase,
+							'base');
+	hemi.gui.curvature.baseSurface.onFinishChange(function(value) {
+			hemiCurvBase_act(astr_hemi, value);
+			});
 	hemi.gui.curvature.funcCombobox = hemi.gui.curvature.folder.add(
 							_curvLoader, 
 							'curvFunc', 
@@ -215,13 +238,13 @@ function guiCurvature_init(astr_hemi) {
 	hemi.gui.curvature.minThresholdSelector = hemi.gui.curvature.folder.add(
 						hemi.surface.scalars, 
 		  				'lowerThreshold',
-		  				-5, 0);
+		  				-10, 0);
 //						hemi.surface.scalars.min,
 //						hemi.surface.scalars.max);
 	hemi.gui.curvature.maxThresholdSelector = hemi.gui.curvature.folder.add(
 						hemi.surface.scalars, 
 		  				'upperThreshold',
-		  				0, 5);
+		  				0, 10);
 //		  				hemi.surface.scalars.min,
 //		  				hemi.surface.scalars.max);
 	hemi.gui.curvature.folder.open();
@@ -265,45 +288,72 @@ function hemiPosition_act(astr_hemi, value, astr_pos) {
 //
 function hemiMeshFunc_act(astr_hemi, value) {
 	hemi = hemi_select(astr_hemi);
-	hemi.render.surfaceMesh = value;
-	hemi.render.surfaceMeshFile = hemi.render.surfaceMeshPath + value;
-	hemi.surface.file = hemi.render.surfaceMeshFile;
-	hemi.surface.modified();
+	var str_meshFile = hemi.render.surfaceMeshPath + value;
+	if(Xfile_checkAccess(str_meshFile)) {
+		hemi.render.surfaceMesh = value;
+		hemi.render.surfaceMeshFile = str_meshFile;
+		hemi.surface.file = hemi.render.surfaceMeshFile;
+		hemiPosition_act(astr_hemi, S_render_Xoffset(astr_hemi), 'X');
+		hemi.surface.modified();
+	}
 }
 
 //
-// Curvature selection callback
+// Curvature mesh base callback
+//
+function hemiCurvBase_act(astr_hemi, value) {
+	switch(astr_hemi) {
+	case 'Left':	astr_hemi = 'lh';
+					break;
+	case 'Right':	astr_hemi = 'rh';
+					break;
+	}
+	S_render_baseCurve_set(astr_hemi, value);
+    curvatureFiles = [ 	S_render[astr_hemi].allCurvFile.H,
+                       	S_render[astr_hemi].allCurvFile.K,
+                       	S_render[astr_hemi].allCurvFile.K1,    	    			
+                       	S_render[astr_hemi].allCurvFile.K2,
+                       	S_render[astr_hemi].allCurvFile.C ];
+}
+
+
+//
+//Curvature function callback
 //
 function hemiCurvFunc_act(astr_hemi, value) {
 	hemi = hemi_select(astr_hemi);
 	var _index = curvatureTypes.indexOf(value);
+	var _rec = curvatureIndexLookup[_index];
     // we need to buffer the (maybe changed) colors
     // else wise we would start with the default red<->green mapping
     var oldMinColor = hemi.surface.scalars.minColor;
     var oldMaxColor = hemi.surface.scalars.maxColor;
-    
-    // now we (re-)load the selected curvature file
-    hemi.surface.scalars.array = null;
-    hemi.surface.scalars.file = hemi.render.functionCurvPath + 
-    				curvatureFiles[_index] + '.crv';
 
-    console.log("Sending modified() event on " + hemi.surface.scalars.file);
-    hemi.surface.modified();
-
-    xrender.onShowtime = function() {
-        hemi_infoUpdate(astr_hemi, value);
-    };
-
-	// This is an UGLY hack. Basically, the hemisphere values should be
-	// updated *after* the modified() event above has been serviced. 
-	// Since this is asynchronous, we wait 2000ms after the modified()
-	// and then update the hemi info.
-	//setTimeout(function() {
-	//    hemi_infoUpdate(astr_hemi, value);
-	//}, 2000);		
+    var str_curvFile = hemi.render.functionCurvPath + 
+					hemi.render.allCurvFile[_rec] + '.crv';
+    if(Xfile_checkAccess(str_curvFile)) {
+	    // now we (re-)load the selected curvature file
+	    hemi.surface.scalars.array = null;
+	    hemi.surface.scalars.file = str_curvFile;
 	
-    hemi.surface.scalars.minColor 	= oldMinColor;
-    hemi.surface.scalars.maxColor 	= oldMaxColor;
+	    console.log("Sending modified() event on " + hemi.surface.scalars.file);
+	    hemi.surface.modified();
+	
+	    xrender.onShowtime = function() {
+	        hemi_infoUpdate(astr_hemi, value);
+	    };
+
+		// This is an UGLY hack. Basically, the hemisphere values should be
+		// updated *after* the modified() event above has been serviced. 
+		// Since this is asynchronous, we wait 2000ms after the modified()
+		// and then update the hemi info.
+		//setTimeout(function() {
+		//    hemi_infoUpdate(astr_hemi, value);
+		//}, 2000);		
+		
+	    hemi.surface.scalars.minColor 	= oldMinColor;
+	    hemi.surface.scalars.maxColor 	= oldMaxColor;
+    }
 }
 
 //
@@ -311,11 +361,12 @@ function hemiCurvFunc_act(astr_hemi, value) {
 //
 function hemiLabel_act(astr_hemi, value) {
 	hemi = hemi_select(astr_hemi);
-	hemi.surface.scalars.file = hemi.render.labelPath + value + '.label';
-	str_url = location.origin + '/' + hemi.surface.scalars.file;
-	hemi.surface.modified();
-	if(!url_exists(str_url)) {alert(str_url + '\nNot found.');}
-	xrender.onShowtime = function() {};
+	var str_labelFile = hemi.render.labelPath + value + '.label';
+	if(Xfile_checkAccess(str_labelFile)) {
+		hemi.surface.scalars.file = hemi.render.labelPath + value + '.label';
+		hemi.surface.modified();
+		xrender.onShowtime = function() {};
+	}
 }
 
 // The GUI_build() is called just before the first rendering attempt, i.e.
@@ -327,10 +378,10 @@ GUI_build = function() {
 	this._counter = this._counter + 1;
 	
 	// The available mesh types
-	meshTypes 	   = [ 'smoothwm',
-	          	       'inflated',
-	          	       'sphere'
-	          	      ];
+	meshTypes 	   = [ 'inflated',
+	          	       'smoothwm',
+	          	       'pial',
+	          	       'sphere' ];
 	
     // The available curvature types (looks a little cryptic but is 
     // just text) and files
@@ -340,6 +391,12 @@ GUI_build = function() {
                       'k&#x2082; (mm&#x207b;&sup1;)',
                       'C (mm&#x207b;&sup2;)'];
 
+    curvatureIndexLookup = ['H',
+                            'K',
+                            'K1',
+                            'K2',
+                            'C'];
+    
     // These are the string names of actual files, like 'smoothwm.H'
     // and since they are the same names for the lh and rh, we use the
     // lh parts of the S_render structure here to define the names.
