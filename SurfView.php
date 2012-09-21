@@ -141,7 +141,10 @@ include 'SurfView/fs_dirsParse.php';
   </span>
 
   <span         id      = "rh_info"
-                style   = "color: white;
+  				class	= "ui-widget-content"
+  				style   = "border: 0px;
+  						   color: white;
+  						   background: black;
                            font-family: Inika;">
     <table border="0" cellspacing="0" cellpadding="0" style="color:white;
     	   font-size:90%;table-layout:fixed;width:250px;">
@@ -159,11 +162,15 @@ include 'SurfView/fs_dirsParse.php';
     </table>
   </span>
 
-  <div id="Right_histogram" style = "width:300px; height:150px; border:1px; solid #000000;">
+  <div id="Right_histogram" class="ui-widget-content" 
+  		style = "background:black; width:300px; height:150px; border:1px; solid #000000;">
   </div>
   
   <span         id      = "lh_info"
-                style   = "color: white;
+  				class   = "ui-widget-content"
+  				style   = "border: 0px;
+  						   color: white;
+  						   background: black;
                            font-family: Inika;">
     <table border="0" cellspacing="0" cellpadding="0" style="color:white;
     	   font-size:90%;table-layout:fixed;width:250px;">
@@ -181,7 +188,8 @@ include 'SurfView/fs_dirsParse.php';
     </table>
   </span>
   
-  <div id="Left_histogram" style = "width:300px; height:150px; border:1px; solid #000000;">
+  <div id="Left_histogram" class="ui-widget-content" 
+  		style = "background:black; width:300px; height:150px; border:1px; solid #000000;">
   </div>
   
 </body>
