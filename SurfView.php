@@ -65,7 +65,7 @@ include 'SurfView/fs_dirsParse.php';
 <link href='http://fonts.googleapis.com/css?family=Fresca' rel='stylesheet' type='text/css'>
 <link href='http://fonts.googleapis.com/css?family=Walter+Turncoat' rel='stylesheet' type='text/css'>
 
-<link href='../css/buttons.css' rel='stylesheet'/>
+<link href='SurfView/css/buttons.css' rel='stylesheet'/>
 
 <!-- <script type="text/javascript" src='scripts/jquery.js'></script> -->
 
