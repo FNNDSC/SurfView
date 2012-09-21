@@ -70,10 +70,10 @@ include 'SurfView/fs_dirsParse.php';
 <!-- <script type="text/javascript" src='scripts/jquery.js'></script> -->
 
 <script type="text/javascript" src="http://get.goXTK.com/xtk_xdat.gui.js"></script>
-<!-- <script type="text/javascript" src="http://get.goXTK.com/xtk_edge.js "></script> -->
+<script type="text/javascript" src="http://get.goXTK.com/xtk_edge.js "></script>
 
-<script type="text/javascript" src="X/lib/closure-library/closure/goog/base.js"></script>
-<script type="text/javascript" src="X/xtk-deps.js"></script>
+<!-- <script type="text/javascript" src="X/lib/closure-library/closure/goog/base.js"></script> -->
+<!-- <script type="text/javascript" src="X/xtk-deps.js"></script> -->
 
 <!-- Highcharts and friends -->
 <script src="/highcharts/js/highcharts.js" type="text/javascript"></script>
@@ -83,8 +83,8 @@ include 'SurfView/fs_dirsParse.php';
 <script type="text/javascript">
 
 	// The following is required when connecting to a local Xtk build
-	goog.require('X.renderer3D');
-	goog.require('X.mesh');
+	//goog.require('X.renderer3D');
+	//goog.require('X.mesh');
 
 	// First, the main data components passed over from the PHP processing:
     // The main php data structure
