@@ -76,7 +76,7 @@ include 'SurfView/fs_dirsParse.php';
 <!-- <script type="text/javascript" src="X/xtk-deps.js"></script> -->
 
 <!-- Highcharts and friends -->
-<script src="/highcharts/js/highcharts.js" type="text/javascript"></script>
+<script src="SurfView/highcharts/js/highcharts.js" type="text/javascript"></script>
 
 <!-- <script type="text/javascript" src="http://get.goXTK.com/xtk.js "></script> -->
 
