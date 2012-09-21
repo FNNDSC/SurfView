@@ -93,6 +93,7 @@ include 'SurfView/fs_dirsParse.php';
     var subjectArr = <?= $jsArr_subjectList ?>;
     // and the first subject in that list...
     var subjectStart = '<?= $subject ?>';
+    var subjectDir = '<?= $subjectDir ?>';
 
 	// A 'structure' to contain the left and right hemisphere meshes
     var S_mesh = {
