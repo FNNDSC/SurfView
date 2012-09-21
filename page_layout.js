@@ -78,7 +78,9 @@ jQuery(document).ready(function($) {
     jQuery("#radio").buttons_layout(jQuery("#title").height()+10);
 
     jQuery("#rh_info").rhData_layout();
+    jQuery("#rh_info").draggable();
     jQuery("#lh_info").lhData_layout();
+    jQuery("#lh_info").draggable();
 
     // Button callbacks...
     jQuery("#as").click(function() {
@@ -170,6 +172,7 @@ jQuery.fn.rhData_layout = function() {
       this.css("position", "absolute");
       this.css("top",  window.innerHeight - docElement.clientHeight - 20 + "px");
       this.css("right", "10px");
+      jQuery("#Right_histogram").draggable();
       jQuery("#Right_histogram").rhHistogram_layout();
       return this;
 };
@@ -179,6 +182,7 @@ jQuery.fn.lhData_layout = function() {
     this.css("position", "absolute");
     this.css("top",  window.innerHeight - docElement.clientHeight - 20 + "px");
     this.css("left", "10px");
+    jQuery("#Left_histogram").draggable();
     jQuery("#Left_histogram").lhHistogram_layout();
     return this;
 };
