@@ -72,11 +72,18 @@ hid = {
 //	(in S_render convention) and return the path spec
 //  with new subject.
 //
+//  It is quite important that the subjectDir is correctly
+//  preserved during this operation.
+//
 function subject_set(astr_path, astr_subject, aindex) {
-	var arr_dir = astr_path.split('/');
+	// First, split off the subjectDir from the astr_path
+	var str_noSubject = astr_path.split(subjectDir)[1];
+	var arr_dir = str_noSubject.split('/');
 	aindex = (typeof aindex == 'undefined') ? 1 : aindex;
 	arr_dir[aindex] = astr_subject;
-	return(arr_dir.join('/'));
+	var str_newSubject = subjectDir + arr_dir.join('/');
+	console.log(str_newSubject);
+	return(subjectDir + arr_dir.join('/'));
 }
 
 //
