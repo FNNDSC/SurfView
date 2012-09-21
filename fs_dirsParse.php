@@ -136,7 +136,7 @@
 
 <?php
     // Whole brain vars
-    $subjectDir		= $_REQUEST['subjectDir'];
+    $subjectDir		= $_REQUEST['SUBJECTS_DIR'];
     $subject 		= $_REQUEST['subject'];
 
     // Define the core data structures necessary for the viewer:
