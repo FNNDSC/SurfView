@@ -313,6 +313,7 @@ function hemiCurvBase_act(astr_hemi, value) {
                        	S_render[astr_hemi].allCurvFile.K,
                        	S_render[astr_hemi].allCurvFile.K1,    	    			
                        	S_render[astr_hemi].allCurvFile.K2,
+                       	S_render[astr_hemi].allCurvFile.S,
                        	S_render[astr_hemi].allCurvFile.C ];
 }
 
@@ -389,12 +390,14 @@ GUI_build = function() {
                       'k (mm&#x207b;&sup2;)',
                       'k&#x2081; (mm&#x207b;&sup1;)',
                       'k&#x2082; (mm&#x207b;&sup1;)',
+                      'S (mm&#x207b;&sup2;)',
                       'C (mm&#x207b;&sup2;)'];
 
     curvatureIndexLookup = ['H',
                             'K',
                             'K1',
                             'K2',
+                            'S',
                             'C'];
     
     // These are the string names of actual files, like 'smoothwm.H'
@@ -404,6 +407,7 @@ GUI_build = function() {
                        	S_render.lh.allCurvFile.K,
                        	S_render.lh.allCurvFile.K1,    	    			
                        	S_render.lh.allCurvFile.K2,
+                       	S_render.lh.allCurvFile.S,
                        	S_render.lh.allCurvFile.C ];
 
     if(this._counter == 1) {
