@@ -124,6 +124,7 @@
  *	|	|				+--K:	filename of gaussian crv file
  *	|	|				+--K1: 	filename of maximum crv file
  *	|	|				+--K2:	filename of minimium crv file
+ *	|	|				+--S:	filename of sharpenss crv file
  *	|	|				+--C:   filename of curvedness crv file
  *	|	+--labelPath:			directory path to label folder
  *	|
@@ -176,7 +177,8 @@
     			  	'K'  => 'gaussian', 
     			  	'K1' => 'maximum', 
     			  	'K2' => 'minimum', 
-    			  	'C'  => 'curvedness'
+    			  	'S'  => 'sharpness', 
+    				'C'  => 'curvedness'
     				);
     
     // Scan the URL for arguments to initialize viewer
