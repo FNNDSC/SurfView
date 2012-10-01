@@ -66,6 +66,7 @@ include 'SurfView/fs_dirsParse.php';
 <link href='http://fonts.googleapis.com/css?family=Walter+Turncoat' rel='stylesheet' type='text/css'>
 
 <link href='SurfView/css/buttons.css' rel='stylesheet'/>
+<link href='SurfView/css/viewer.css' rel='stylesheet'/>
 
 <!-- <script type="text/javascript" src='scripts/jquery.js'></script> -->
 
@@ -124,6 +125,11 @@ include 'SurfView/fs_dirsParse.php';
   <div class="renderer" id="mesh" style="background-color: #000000; width: 100%; height: 100%;">
   </div>
 
+      <span class='ui-icon ui-icon-image toolbar_icon' style='top:50px;left:0px' title='Split Screen' 
+      onclick='split_screen()'></span>
+      <span class='ui-icon ui-icon-image toolbar_icon' style='top:50px;left:20px' title='Split Screen' 
+      onclick='split_screen()'></span>
+  
   <span id="radio" class="fg-buttonset fg-buttonset-single">
         <button id = "as" class="fg-button ui-state-default ui-priority-primary ui-corner-left">Axial (Superior)</button>
         <button id = "ai" class="fg-button ui-state-default ui-priority-primary">Axial (Inferior)</button>
