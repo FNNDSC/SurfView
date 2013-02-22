@@ -274,11 +274,11 @@ function hemiPosition_act(astr_hemi, value, astr_pos) {
 	hemi = hemi_select(astr_hemi);
 	switch(astr_pos) {
 	case 'X':
-		hemi.surface.transform.matrix.setValueAt(0, 3, value); break;
+		hemi.surface.transform.matrix[12] = value; break;
 	case 'Y':
-		hemi.surface.transform.matrix.setValueAt(1, 3, value); break;
+		hemi.surface.transform.matrix[13] = value; break;
 	case 'Z':
-		hemi.surface.transform.matrix.setValueAt(2, 3, value); break;
+		hemi.surface.transform.matrix[14] = value; break;
 	}
 	hemi.surface.transform.modified();
 }
@@ -314,6 +314,7 @@ function hemiCurvBase_act(astr_hemi, value) {
                        	S_render[astr_hemi].allCurvFile.K1,    	    			
                        	S_render[astr_hemi].allCurvFile.K2,
                        	S_render[astr_hemi].allCurvFile.S,
+                       	S_render[astr_hemi].allCurvFile.BE,
                        	S_render[astr_hemi].allCurvFile.C ];
 }
 
@@ -391,6 +392,7 @@ GUI_build = function() {
                       'k&#x2081; (mm&#x207b;&sup1;)',
                       'k&#x2082; (mm&#x207b;&sup1;)',
                       'S (mm&#x207b;&sup2;)',
+                      'BE (mm&#x207b;&sup2;)',
                       'C (mm&#x207b;&sup2;)'];
 
     curvatureIndexLookup = ['H',
@@ -398,6 +400,7 @@ GUI_build = function() {
                             'K1',
                             'K2',
                             'S',
+                            'BE',
                             'C'];
     
     // These are the string names of actual files, like 'smoothwm.H'
@@ -408,6 +411,7 @@ GUI_build = function() {
                        	S_render.lh.allCurvFile.K1,    	    			
                        	S_render.lh.allCurvFile.K2,
                        	S_render.lh.allCurvFile.S,
+                       	S_render.lh.allCurvFile.BE,
                        	S_render.lh.allCurvFile.C ];
 
     if(this._counter == 1) {
