@@ -178,6 +178,7 @@
     			  	'K1' => 'maximum', 
     			  	'K2' => 'minimum', 
     			  	'S'  => 'sharpness', 
+    				'BE' => 'bending energy',
     				'C'  => 'curvedness'
     				);
     
