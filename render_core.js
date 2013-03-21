@@ -44,8 +44,9 @@
  * planar views in the main display.
  */
 function camera_maxCurrent() {
-    var pos = xrender.camera.view.toArray();
-    return(pos[2][3]);
+//    var pos = xrender.camera.view.toArray();
+//    return(pos[2][3]);
+    return(xrender.camera.view[14]);
 };
 
 /**
