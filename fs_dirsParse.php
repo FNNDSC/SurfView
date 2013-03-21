@@ -154,15 +154,16 @@
     //	o The viewer projects the 'smoothwm' 'H' curvature
     //	  on the inflated surface
     $arr_surfaceSpec	= array(
-    				'surfaceMesh'      	=> 'inflated',
-     				'surfaceCurv'      	=> 'smoothwm',
-     				'functionCurv'     	=> 'H',
-    				'surfaceMeshPath'  	=> '',
-    				'surfaceMeshFile'  	=> '',
-    				'functionCurvPath' 	=> '',
-    				'functionCurvFile' 	=> '',
-    				'allCurvFile' 	   	=> array(),
-    				'labelPath'	   		=> ''
+    				'surfaceMesh'      		=> 'inflated',
+     				'surfaceCurv'      		=> 'smoothwm',
+     				'functionCurv'     		=> 'H',
+    				'surfaceMeshPath'  		=> '',
+    				'surfaceMeshFile'  		=> '',
+    				'functionCurvQualifier' => '',
+    				'functionCurvPath' 		=> '',
+    				'functionCurvFile' 		=> '',
+    				'allCurvFile' 	   		=> array(),
+    				'labelPath'	   			=> ''
     				);
 
     $arr_hemi		= array('lh', 'rh');
