@@ -69,6 +69,7 @@ _guiMesh = {
 _guiCurvature = {
 	    folder:					null,
 	    baseSurface:			null,
+	    textInput:				null,
 	    funcCombobox:			null,
 	    minColorSelector:		null,
 	    maxColorSelector:		null,
@@ -130,6 +131,9 @@ _curvBase = {
   base: 'smoothwm'
 };
 
+_curvQualifier = {
+		qualifier: '<undefined>'
+};
 
 // Initial value of the curvature drop down box
 _curvLoader = {
@@ -219,6 +223,12 @@ function guiCurvature_init(astr_hemi) {
 	hemi.gui.curvature.baseSurface.onFinishChange(function(value) {
 			hemiCurvBase_act(astr_hemi, value);
 			});
+	hemi.gui.label.textInput = hemi.gui.curvature.folder.add(
+							_curvQualifier, 'qualifier');
+	hemi.gui.label.textInput.onFinishChange(function(value) {
+	        console.log('Setting internal curvature map to ' + value);
+	        hemiCurvQualifier_act(astr_hemi, value);
+		  });      
 	hemi.gui.curvature.funcCombobox = hemi.gui.curvature.folder.add(
 							_curvLoader, 
 							'curvFunc', 
@@ -318,11 +328,45 @@ function hemiCurvBase_act(astr_hemi, value) {
                        	S_render[astr_hemi].allCurvFile.C ];
 }
 
+//
+// Curvature qualifier callback
+//
+function hemiCurvQualifier_act(astr_hemi, avalue) {
+	switch(astr_hemi) {
+	case 'Left':	astr_hemi = 'lh';
+					break;
+	case 'Right':	astr_hemi = 'rh';
+					break;
+	}
+	S_render_curvQualifier_set(astr_hemi, avalue);
+    curvatureFiles = [ 	S_render[astr_hemi].allCurvFile.H,
+                       	S_render[astr_hemi].allCurvFile.K,
+                       	S_render[astr_hemi].allCurvFile.K1,    	    			
+                       	S_render[astr_hemi].allCurvFile.K2,
+                       	S_render[astr_hemi].allCurvFile.S,
+                       	S_render[astr_hemi].allCurvFile.BE,
+                       	S_render[astr_hemi].allCurvFile.C ];
+    // We need to now refresh the curvature display. This essentially
+    // means simulating a curvFunc selection; the "trick" is that
+    // the hemicurvFunct_act method needs to be called with the 
+    // drop down function name.
+    funcName = curvatureTypes[0];
+    for(var rec in curvatureIndexLookup) {
+    	console.log(curvatureIndexLookup[rec] + '\t' + S_render[astr_hemi]['functionCurv']);
+    	if(curvatureIndexLookup[rec] == S_render[astr_hemi]['functionCurv']) {
+    		funcName = curvatureTypes[rec];
+    		break;
+    	}
+    }
+    console.log('Calling hemiCurvFunc_act on ' + funcName);
+    hemiCurvFunc_act(astr_hemi, funcName);
+}
 
 //
-//Curvature function callback
+// Curvature function callback
 //
 function hemiCurvFunc_act(astr_hemi, value) {
+	console.log('in hemiCurvFunc, value = ' + value);
 	hemi = hemi_select(astr_hemi);
 	var _index = curvatureTypes.indexOf(value);
 	var _rec = curvatureIndexLookup[_index];
@@ -331,6 +375,16 @@ function hemiCurvFunc_act(astr_hemi, value) {
     var oldMinColor = hemi.surface.scalars.minColor;
     var oldMaxColor = hemi.surface.scalars.maxColor;
 
+    // update the S_render functionCurv 
+    for(var rec in curvatureTypes) {
+    	if(curvatureTypes[rec] == value) {
+    		hemi.render.functionCurv = curvatureIndexLookup[rec];
+    		console.log('Setting S_render hemi functionCurv to ' + 
+    				curvatureIndexLookup[rec]);
+    		break;
+    	}
+    }
+    
     var str_curvFile = hemi.render.functionCurvPath + 
 					hemi.render.allCurvFile[_rec] + '.crv';
     if(Xfile_checkAccess(str_curvFile)) {
@@ -359,7 +413,7 @@ function hemiCurvFunc_act(astr_hemi, value) {
 }
 
 //
-//Label specification callback
+// Label specification callback
 //
 function hemiLabel_act(astr_hemi, value) {
 	hemi = hemi_select(astr_hemi);
