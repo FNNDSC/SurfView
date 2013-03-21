@@ -87,6 +87,23 @@ function subject_set(astr_path, astr_subject, aindex) {
 }
 
 //
+// Change the curvature qualifier in the S_render object
+//
+function S_render_curvQualifier_set(astr_hemi, astr_qualifier) {
+	var str_qualifierCurrent = S_render[astr_hemi]['functionCurvQualifier'];
+	var str_fullQualifier = '.' + str_qualifierCurrent;
+	var str_qualifierNew = '.' + astr_qualifier;
+	var S_curvFile = S_render[astr_hemi]['allCurvFile'];
+	for(var rec in S_curvFile) {
+		if(S_curvFile.hasOwnProperty(rec)) {
+			S_curvFile[rec] = S_curvFile[rec].replace(str_fullQualifier, str_qualifierNew);
+			console.log(S_curvFile[rec]);
+		}
+	}
+	S_render[astr_hemi]['functionCurvQualifier'] = astr_qualifier;
+}
+
+//
 // Change the curvature base file in the S_render object
 //
 function S_render_baseCurve_set(astr_hemi, astr_baseNew) {
@@ -140,6 +157,7 @@ function url_exists(astr_url) {
     http.send();
     return http.status!=404;	
 }
+
 
 function url_accessAllowed(astr_url) {
     var http = new XMLHttpRequest();
