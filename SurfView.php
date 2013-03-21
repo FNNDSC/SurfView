@@ -25,17 +25,17 @@
  *
  * For reference, see also:
  *
- *	http://lessons.goxtk.com/08/
- *	http://lessons.goxtk.com/12/
+ *    http://lessons.goxtk.com/08/
+ *    http://lessons.goxtk.com/12/
  *
  * Typical calling:
  *
- *	http://natal.tch.harvard.edu/surfview.php?subjectDir=allSubjects
+ *    http://natal.tch.harvard.edu/surfview.php?subjectDir=allSubjects
  *
  *
  *
  * Enjoy!
- *	- the X devs
+ *    - the X devs
  *
  */
 -->
@@ -83,11 +83,11 @@ include 'SurfView/fs_dirsParse.php';
 
 <script type="text/javascript">
 
-	// The following is required when connecting to a local Xtk build
-	//goog.require('X.renderer3D');
-	//goog.require('X.mesh');
+    // The following is required when connecting to a local Xtk build
+    //goog.require('X.renderer3D');
+    //goog.require('X.mesh');
 
-	// First, the main data components passed over from the PHP processing:
+    // First, the main data components passed over from the PHP processing:
     // The main php data structure
     var S_render = <?= $jsArr_render ?>;
     // Array list of subject variables
@@ -96,17 +96,17 @@ include 'SurfView/fs_dirsParse.php';
     var subjectStart = '<?= $subject ?>';
     var subjectDir = '<?= $subjectDir ?>';
 
-	// A 'structure' to contain the left and right hemisphere meshes
+    // A 'structure' to contain the left and right hemisphere meshes
     var S_mesh = {
-	    'lh':	null,
-	    'rh':	null
+        'lh':    null,
+        'rh':    null
     };
 
     // The GUI -- adapted from http://lessons.goxtk.com/12/
-    var DATgui = null; 	
+    var DATgui = null;     
 
     // The actual xtk renderer
-    var xrender	= null;
+    var xrender    = null;
     
 </script>
 
@@ -143,59 +143,59 @@ include 'SurfView/fs_dirsParse.php';
                 style   = "color: white;
                            font-family: Inika;
                            font-size:200%;">
-	<?= $subject ?>
+    <?= $subject ?>
   </span>
 
   <span         id      = "rh_info"
-  				class	= "ui-widget-content"
-  				style   = "border: 0px;
-  						   color: white;
-  						   background: black;
+                  class    = "ui-widget-content"
+                  style   = "border: 0px;
+                             color: white;
+                             background: black;
                            font-family: Inika;">
     <table border="0" cellspacing="0" cellpadding="0" style="color:white;
-    	   font-size:90%;table-layout:fixed;width:250px;">
+           font-size:90%;table-layout:fixed;width:250px;">
         <tr>
         <td style="width:150px;";>hemisphere</td>
         <td align="right">right</td>
         </tr>
-        <tr><td>vertices</td>         	<td align="right" id = "rh_vertices">undefined</td></tr>
+        <tr><td>vertices</td>             <td align="right" id = "rh_vertices">undefined</td></tr>
         <tr><td>curvature function </td><td align="right" id = "rh_curvFunc">undefined</td></tr>
-        <tr><td>neg count</td>  	<td align="right" id = "rh_negCount">undefined</td></tr>
-        <tr><td>pos count</td>  	<td align="right" id = "rh_posCount">undefined</td></tr>
-        <tr><td>min value</td>  	<td align="right" id = "rh_minCurv">undefined</td></tr>
-        <tr><td>max value</td>  	<td align="right" id = "rh_maxCurv">undefined</td></tr>
-        <tr><td>std value</td>  	<td align="right" id = "rh_stdCurv">undefined</td></tr>
+        <tr><td>neg count</td>      <td align="right" id = "rh_negCount">undefined</td></tr>
+        <tr><td>pos count</td>      <td align="right" id = "rh_posCount">undefined</td></tr>
+        <tr><td>min value</td>      <td align="right" id = "rh_minCurv">undefined</td></tr>
+        <tr><td>max value</td>      <td align="right" id = "rh_maxCurv">undefined</td></tr>
+        <tr><td>std value</td>      <td align="right" id = "rh_stdCurv">undefined</td></tr>
     </table>
   </span>
 
   <div id="Right_histogram" class="ui-widget-content" 
-  		style = "background:black; width:300px; height:150px; border:1px; solid #000000;">
+          style = "background:black; width:300px; height:150px; border:1px; solid #000000;">
   </div>
   
   <span         id      = "lh_info"
-  				class   = "ui-widget-content"
-  				style   = "border: 0px;
-  						   color: white;
-  						   background: black;
+                  class   = "ui-widget-content"
+                  style   = "border: 0px;
+                             color: white;
+                             background: black;
                            font-family: Inika;">
     <table border="0" cellspacing="0" cellpadding="0" style="color:white;
-    	   font-size:90%;table-layout:fixed;width:250px;">
+           font-size:90%;table-layout:fixed;width:250px;">
         <tr>
         <td style="width:150px;">hemisphere</td>
         <td align="right">left</td>
         </tr>
-        <tr><td>vertices</td>         	<td align="right" id = "lh_vertices">undefined</td></tr>
-        <tr><td>curvature function</td>	<td align="right" id = "lh_curvFunc">undefined</td></tr>
-        <tr><td>neg count</td>  	<td align="right" id = "lh_negCount">undefined</td></tr>
-        <tr><td>pos count</td>  	<td align="right" id = "lh_posCount">undefined</td></tr>
-        <tr><td>min value</td>  	<td align="right" id = "lh_minCurv">undefined</td></tr>
-        <tr><td>max value</td>  	<td align="right" id = "lh_maxCurv">undefined</td></tr>
-        <tr><td>std value</td>  	<td align="right" id = "lh_stdCurv">undefined</td></tr>
+        <tr><td>vertices</td>             <td align="right" id = "lh_vertices">undefined</td></tr>
+        <tr><td>curvature function</td>    <td align="right" id = "lh_curvFunc">undefined</td></tr>
+        <tr><td>neg count</td>      <td align="right" id = "lh_negCount">undefined</td></tr>
+        <tr><td>pos count</td>      <td align="right" id = "lh_posCount">undefined</td></tr>
+        <tr><td>min value</td>      <td align="right" id = "lh_minCurv">undefined</td></tr>
+        <tr><td>max value</td>      <td align="right" id = "lh_maxCurv">undefined</td></tr>
+        <tr><td>std value</td>      <td align="right" id = "lh_stdCurv">undefined</td></tr>
     </table>
   </span>
   
   <div id="Left_histogram" class="ui-widget-content" 
-  		style = "background:black; width:300px; height:150px; border:1px; solid #000000;">
+          style = "background:black; width:300px; height:150px; border:1px; solid #000000;">
   </div>
   
 </body>

@@ -22,7 +22,7 @@
  *
  * NAME
  * 
- * 	render_core.js
+ *     render_core.js
  * 
  * DESCRIPTION
  * 
@@ -31,8 +31,8 @@
  * 
  * GLOBAL/External variables:
  * 
- * 	xrender -- 	the actual xtk render instance, shared between various
- * 				system components.
+ *     xrender --     the actual xtk render instance, shared between various
+ *                 system components.
  *    
  */
 
@@ -59,20 +59,20 @@ function camera_maxCurrent() {
  * @protected
  */
 function mesh_init(aS_metaData) {
-	mesh = new X.mesh();
-	mesh.color = [0.5, 0.5, 0.5];
-	mesh.file = aS_metaData.surfaceMeshFile;
+    mesh = new X.mesh();
+    mesh.color = [0.5, 0.5, 0.5];
+    mesh.file = aS_metaData.surfaceMeshFile;
 
-	mesh.scalars.file = aS_metaData.functionCurvFile;
-	mesh.scalars.maxColor = [1, 0, 0];
-	mesh.scalars.minColor = [0, 1, 0];
+    mesh.scalars.file = aS_metaData.functionCurvFile;
+    mesh.scalars.maxColor = [1, 0, 0];
+    mesh.scalars.minColor = [0, 1, 0];
 
-	return mesh;
+    return mesh;
 }
 
 // XTK model
 window.onload =  function() {
-	  
+      
     ['Left', 'Right'].map( function(hemi) {hid_init(hemi);} );
   
     xrender = new X.renderer3D();

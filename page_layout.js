@@ -22,7 +22,7 @@
  *
  * NAME
  * 
- * 	page_layout.js
+ *     page_layout.js
  * 
  * DESCRIPTION
  * 
@@ -62,7 +62,7 @@ jQuery(document).ready(function($) {
     });
 
     jQuery("#title").titlePos_layout(jQuery("#title").width());
-	
+    
     jQuery('a.minibutton').bind({
           mousedown: function() {
           jQuery(this).addClass('mousedown');
@@ -126,26 +126,26 @@ jQuery(document).ready(function($) {
       xrender.render();
     });
 }); // End of document.ready
-	
+    
 jQuery.fn.titlePos_layout = function(textWidth) {
-      this.css("position", "absolute");
-      this.css("top",  "10px");
-      this.css("left", window.innerWidth/2 - textWidth/2 + "px");
-      return this;
+    this.css("position", "absolute");
+    this.css("top",  "10px");
+    this.css("left", window.innerWidth/2 - textWidth/2 + "px");
+    return this;
 };
 
 jQuery.fn.buttons_layout = function(heightOffset) {
-      buttonLayoutWidth = document.getElementById("radio").clientWidth;
-      this.css("position", "absolute");
-      this.css("top",  heightOffset + "px");
-      this.css("left", window.innerWidth/2 - buttonLayoutWidth/2 + "px");
-      return this;
+    buttonLayoutWidth = document.getElementById("radio").clientWidth;
+    this.css("position", "absolute");
+    this.css("top",  heightOffset + "px");
+    this.css("left", window.innerWidth/2 - buttonLayoutWidth/2 + "px");
+    return this;
 };
 
 jQuery.fn.slider_layout = function() {
-      this.css("position", "absolute");
-      this.css("top", "100px");
-      this.css("left", "600px");
+    this.css("position", "absolute");
+    this.css("top", "100px");
+    this.css("left", "600px");
 };
 
 jQuery.fn.rhHistogram_layout = function() {
@@ -168,13 +168,13 @@ jQuery.fn.lhHistogram_layout = function() {
 };
 
 jQuery.fn.rhData_layout = function() {
-      docElement = document.getElementById('rh_info');
-      this.css("position", "absolute");
-      this.css("top",  window.innerHeight - docElement.clientHeight - 20 + "px");
-      this.css("right", "10px");
-      jQuery("#Right_histogram").draggable();
-      jQuery("#Right_histogram").rhHistogram_layout();
-      return this;
+    docElement = document.getElementById('rh_info');
+    this.css("position", "absolute");
+    this.css("top",  window.innerHeight - docElement.clientHeight - 20 + "px");
+    this.css("right", "10px");
+    jQuery("#Right_histogram").draggable();
+    jQuery("#Right_histogram").rhHistogram_layout();
+    return this;
 };
 
 jQuery.fn.lhData_layout = function() {
@@ -188,18 +188,18 @@ jQuery.fn.lhData_layout = function() {
 };
 
 jQuery.fn.textWidth = function(){
-  var html_org = $(this).html();
-  var html_calc = '<span>' + html_org + '</span>';
-  $(this).html(html_calc);
-  var width = $(this).find('span:first').width();
-  $(this).html(html_org);
-  return width;
+    var html_org = $(this).html();
+    var html_calc = '<span>' + html_org + '</span>';
+    $(this).html(html_calc);
+    var width = $(this).find('span:first').width();
+    $(this).html(html_org);
+    return width;
 };
 
 function view_set(av_up, av_camera) {
-  xrender.camera.up = av_up;
-  xrender.camera.position = av_camera;
-  xrender.render();
+    xrender.camera.up = av_up;
+    xrender.camera.position = av_camera;
+    xrender.render();
 }
 
 //splits the document into two frames
