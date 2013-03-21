@@ -147,10 +147,10 @@ include 'SurfView/fs_dirsParse.php';
   </span>
 
   <span         id      = "rh_info"
-                  class    = "ui-widget-content"
-                  style   = "border: 0px;
-                             color: white;
-                             background: black;
+                class   = "ui-widget-content"
+                style   = "border: 0px;
+                           color: white;
+                           background: black;
                            font-family: Inika;">
     <table border="0" cellspacing="0" cellpadding="0" style="color:white;
            font-size:90%;table-layout:fixed;width:250px;">
@@ -159,12 +159,12 @@ include 'SurfView/fs_dirsParse.php';
         <td align="right">right</td>
         </tr>
         <tr><td>vertices</td>             <td align="right" id = "rh_vertices">undefined</td></tr>
-        <tr><td>curvature function </td><td align="right" id = "rh_curvFunc">undefined</td></tr>
-        <tr><td>neg count</td>      <td align="right" id = "rh_negCount">undefined</td></tr>
-        <tr><td>pos count</td>      <td align="right" id = "rh_posCount">undefined</td></tr>
-        <tr><td>min value</td>      <td align="right" id = "rh_minCurv">undefined</td></tr>
-        <tr><td>max value</td>      <td align="right" id = "rh_maxCurv">undefined</td></tr>
-        <tr><td>std value</td>      <td align="right" id = "rh_stdCurv">undefined</td></tr>
+        <tr><td>curvature function </td>  <td align="right" id = "rh_curvFunc">undefined</td></tr>
+        <tr><td>neg count</td>            <td align="right" id = "rh_negCount">undefined</td></tr>
+        <tr><td>pos count</td>            <td align="right" id = "rh_posCount">undefined</td></tr>
+        <tr><td>min value</td>            <td align="right" id = "rh_minCurv">undefined</td></tr>
+        <tr><td>max value</td>            <td align="right" id = "rh_maxCurv">undefined</td></tr>
+        <tr><td>std value</td>            <td align="right" id = "rh_stdCurv">undefined</td></tr>
     </table>
   </span>
 
@@ -173,10 +173,10 @@ include 'SurfView/fs_dirsParse.php';
   </div>
   
   <span         id      = "lh_info"
-                  class   = "ui-widget-content"
-                  style   = "border: 0px;
-                             color: white;
-                             background: black;
+                class   = "ui-widget-content"
+                style   = "border: 0px;
+                           color: white;
+                           background: black;
                            font-family: Inika;">
     <table border="0" cellspacing="0" cellpadding="0" style="color:white;
            font-size:90%;table-layout:fixed;width:250px;">
@@ -185,12 +185,12 @@ include 'SurfView/fs_dirsParse.php';
         <td align="right">left</td>
         </tr>
         <tr><td>vertices</td>             <td align="right" id = "lh_vertices">undefined</td></tr>
-        <tr><td>curvature function</td>    <td align="right" id = "lh_curvFunc">undefined</td></tr>
-        <tr><td>neg count</td>      <td align="right" id = "lh_negCount">undefined</td></tr>
-        <tr><td>pos count</td>      <td align="right" id = "lh_posCount">undefined</td></tr>
-        <tr><td>min value</td>      <td align="right" id = "lh_minCurv">undefined</td></tr>
-        <tr><td>max value</td>      <td align="right" id = "lh_maxCurv">undefined</td></tr>
-        <tr><td>std value</td>      <td align="right" id = "lh_stdCurv">undefined</td></tr>
+        <tr><td>curvature function</td>   <td align="right" id = "lh_curvFunc">undefined</td></tr>
+        <tr><td>neg count</td>            <td align="right" id = "lh_negCount">undefined</td></tr>
+        <tr><td>pos count</td>            <td align="right" id = "lh_posCount">undefined</td></tr>
+        <tr><td>min value</td>            <td align="right" id = "lh_minCurv">undefined</td></tr>
+        <tr><td>max value</td>            <td align="right" id = "lh_maxCurv">undefined</td></tr>
+        <tr><td>std value</td>            <td align="right" id = "lh_stdCurv">undefined</td></tr>
     </table>
   </span>
   
