@@ -125,9 +125,19 @@ include 'SurfView/fs_dirsParse.php';
   <div class="renderer" id="mesh" style="background-color: #000000; width: 100%; height: 100%;">
   </div>
 
-      <span class='ui-icon ui-icon-image toolbar_icon' style='top:50px;left:0px' title='Split Screen' 
+      <span class= 'ui-icon ui-icon-image toolbar_icon'
+            style= 'top:50px;
+                    left:0px;
+                    background-image:
+                    url(SurfView/gfx/jquery-ui/ui-icons_ffffff_256x240.png);'
+            title= 'Split Screen'
       onclick='split_screen()'></span>
-      <span class='ui-icon ui-icon-image toolbar_icon' style='top:50px;left:20px' title='Split Screen' 
+      <span class= 'ui-icon ui-icon-image toolbar_icon'
+            style= 'top:50px;
+                    left:10px;
+                    background-image:
+                    url(SurfView/gfx/jquery-ui/ui-icons_ffffff_256x240.png);'
+            title= 'Split Screen'
       onclick='split_screen()'></span>
   
   <span id="radio" class="fg-buttonset fg-buttonset-single">
