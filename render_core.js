@@ -70,6 +70,20 @@ function mesh_init(aS_metaData) {
     return mesh;
 }
 
+Float32Array.prototype.subArray_set = function(a_array, ai_startPos)
+{
+    var i, j;
+    var insertLen   = a_array.length;
+    var thisLen     = this.length;
+    if(ai_startPos + insertLen > thisLen) return;
+
+    j = 0;
+    for(i=ai_startPos; i<ai_startPos+insertLen; i++) {
+        this[i] = a_array[j++];
+    }
+};
+
+
 // XTK model
 window.onload =  function() {
       
@@ -81,11 +95,11 @@ window.onload =  function() {
 
     S_mesh.lh = mesh_init(S_render.lh);
     hemiPosition_act('lh', S_render_Xoffset('lh'), 'X');
-    S_mesh.lh.scalars.interpolation = 1;
+    S_mesh.lh.scalars.interpolation = S_render.lh.colorInterpolation;
     S_mesh.rh = mesh_init(S_render.rh);
     hemiPosition_act('rh', S_render_Xoffset('rh'), 'X');
-    S_mesh.rh.scalars.interpolation = 1;
-    
+    S_mesh.rh.scalars.interpolation = S_render.rh.colorInterpolation;
+        
     xrender.add(S_mesh.lh);
     xrender.add(S_mesh.rh);
 
@@ -97,8 +111,8 @@ window.onload =  function() {
     //          z: axial
     //
 
-    // Default rendering: axial (superior)
-    xrender.camera.up = [0, 1, 0];
+    // Default rendering: coronal (left)
+    xrender.camera.up       = [0, 1, 0];
     xrender.camera.position = [0, 0, 500];
 
     console.log('calling render');
