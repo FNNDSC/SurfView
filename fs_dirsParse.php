@@ -28,7 +28,7 @@
  *
  * SYNOPSIS
  *
- *        fs_dirsParse.php?subjectDir=<subjectDir>[\
+ *        fs_dirsParse.php?SUBJECTS_DIR=<subjectDir>[\
  *              &subject=<subject>\
  *              &lh_surfaceMesh=<meshLH>\
  *              &rh_surfaceMesh=<meshRH>\
@@ -48,7 +48,7 @@
  *
  * ARGS
  *
- *    &subjectDir=<FreeSurfer_subjectDir>
+ *    &SUBJECTS_DIR=<subjectDir>
  *        
  *        This defines the FreeSurfer subject directory that is parsed for
  *        a complete subject list. This directory MUST be accessible by the
@@ -79,11 +79,29 @@
  *
  *        Default: 'smoothwm'
  *
- *    &lh_functionCurv=<initialCurvatureFunctionToOverlayLH>
+  *    &lh_functionCurv=<initialCurvatureFunctionToOverlayLH>
  *
  *        This defines the actual curvature function to display on the surface.
  *
  *        Default: 'H'
+ *
+ *    &lh_functionCurvQualifier=<qualifier>
+ *
+ *        A "qualifier" that further specifies the curvature function type to
+ *		  load. Curvature files are of form:
+ *
+ *				<hemi>.<surface>.<qualifier><curv>.crv
+ *
+ *		  Thus, if the curvature file is 'lh.smoothwm.H.crv', a <qualifier>
+ *		  of 'ans-' will load a file called 'lh.smoothwm.ans-H.crv'.		  
+ *
+ *        Default: ''
+ *
+ *	  &lh_colorInterpolation=<scheme>
+ *
+ *	  	  The color interpolation scheme to use for the curvature display.
+ *		
+ *		  Default: 'FreeSurfer'
  *
  *    &rh_surfaceMesh=<meshRH>
  *    &rh_surfaceCurv=<curvatureBaseSurfaceForLH>
@@ -124,21 +142,30 @@
  *    |    |                +--K:       filename of gaussian crv file
  *    |    |                +--K1:      filename of maximum crv file
  *    |    |                +--K2:      filename of minimium crv file
- *    |    |                +--S:       filename of sharpenss crv file
+ *    |    |                +--S:       filename of sharpness crv file
+ *    |    |                +--BE:      filename of bending energy crv file
  *    |    |                +--C:       filename of curvedness crv file
  *    |    +--labelPath:                directory path to label folder
  *    |
  *    +--rh (same as 'lh')
  *
- 
+ *
  *
  */
 -->
 
 <?php
+
+	function hprint($text) {
+		printf('<p>%s</p>', $text);
+	}
+
+ 	//require_once('PhpConsole.php');
+	//PhpConsole::start();
+
     // Whole brain vars
-    $subjectDir        = $_REQUEST['SUBJECTS_DIR'];
-    $subject         = $_REQUEST['subject'];
+    $subjectDir		= $_REQUEST['SUBJECTS_DIR'];
+    $subject        = $_REQUEST['subject'];
 
     // Define the core data structures necessary for the viewer:
     //  o arr_surfaceSpec contains information relevant to a surface
@@ -154,6 +181,9 @@
     //  o The viewer projects the 'smoothwm' 'H' curvature
     //      on the inflated surface
     $arr_surfaceSpec    = array(
+    	'name'							=> '',
+    	'visible'						=> '1',
+    	'colorInterpolation'		    => 1,
         'surfaceMesh'                   => 'inflated',
         'surfaceCurv'                   => 'smoothwm',
         'functionCurv'                  => 'H',
@@ -163,7 +193,8 @@
         'functionCurvPath'              => '',
         'functionCurvFile'              => '',
         'allCurvFile'                   => array(),
-        'labelPath'                     => ''
+        'labelPath'                     => '',
+    	'label'							=> ''
         );
 
     $arr_hemi           = array('lh', 'rh');
@@ -189,11 +220,17 @@
     //      lh_surfaceMesh=smoothwm&lh_functionCurv=K1&\
     //      rh_surfaceMesh=inflated&rh_functionCurv=H
     foreach($arr_hemi as $hemi) {
+    	$arr_render[$hemi]['name'] = $hemi;
         foreach($arr_surfaceSpec as $surfaceSpecKey => $surfaceSpecVal) {
             $str_request  = '';
             $str_request .= $hemi . '_' . $surfaceSpecKey;
-            if(!empty($_REQUEST[$str_request]))
+            if(strlen($_REQUEST[$str_request])) {
                 $arr_render[$hemi][$surfaceSpecKey] = $_REQUEST[$str_request];
+                if($surfaceSpecKey == 'colorInterpolation') {
+                	$arr_render[$hemi][$surfaceSpecKey] = 
+                	(int)$arr_render[$hemi][$surfaceSpecKey] = $_REQUEST[$str_request];
+                }
+            }
         }
     }
     $jsArr_render = json_encode($arr_render);
@@ -245,4 +282,4 @@
    
    $jsArr_render = json_encode($arr_render);
    //print $jsArr_render;
-?>
+?>
