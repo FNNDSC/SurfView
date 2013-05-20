@@ -71,6 +71,7 @@ _guiCurvature = {
         baseSurface:            null,
         textInput:              null,
         funcCombobox:           null,
+        interpolationCombobox:  null,
         minColorSelector:       null,
         maxColorSelector:       null,
         minThresholdSelector:   null,
@@ -92,7 +93,7 @@ function translate_holder() {
 }
 
 // The logical components of the GUI per-hemisphere panels:
-//     - mesh settings
+//    - mesh settings
 //    - curvature settings
 //    - label settings
 _guiHemi = {
@@ -112,44 +113,46 @@ _gui = {
         rh:                     _guiHemi
         };
 
+// The following 'default' values should probably be 
+// differentiated between left and right hemispheres.
+
+//
+// The following "structs" define the initial values for several
+// GUI components (drop down boxes, text boxes, etc).
+//
 // Initial value of the subject drop down box
-_subjectLoader = {
-        // First entry in the $arr_subjectList
-        subjectName: subjectStart
-};
-
+_subjectLoader          = { subjectName:    subjectStart};
 // Initial value of the surface drop down box
-_surfLoader = {
-        // Default surface mesh to display
-        surfMesh: 'inflated'
-};
-
+_surfLoader             = { surfMesh:       null};
 // Initial value of the curvature surface base
-_curvBase = {
-        // Default curvature base surface
-        base: 'smoothwm'
-};
-
-_curvQualifier = {
-        qualifier: '<undefined>'
-};
-
+_curvBase               = { base:           null };
+// Initial value of the qualifier text field
+_curvQualifier          = { qualifier:      null };
+// Initial value of the surface color interpolation drop down box
+_interpolationLoader    = { interpolation:  null };
 // Initial value of the curvature drop down box
-_curvLoader = {
-        // Default Curvature Type to display
-        curvFunc: 'H (mm&#x207b;&sup1;)'
-};
-
-
+_curvLoader             = { curvFunc:       null };
 // Initial value of the label text field
-_label = { 
-        label: '<undefined>' 
+_label                  = { label:          null };
+// Combine all into a "defaults" struct
+_defaults = {
+        surfLoader:             _surfLoader,
+        curvBase:               _curvBase,
+        curvQualifier:          _curvQualifier,
+        interpolationLoader:    _interpolationLoader,
+        curvLoader:             _curvLoader,
+        label:                  _label
 };
-
+// And combine all defaults into left and right hemispheres.
+_initial = {
+        lh: _defaults,
+        rh: _defaults
+};
 
 function renderSubject_set(astr_subject) {
     // Set the internal S_render records to new subject and load new
     // meshes / curvatures.
+    console.log('renderSubject_set::START');
     var pageTitle_update = true;
     ['lh', 'rh'].map(function(hemisphere) {
         ['functionCurvFile', 'functionCurvPath', 'labelPath',
@@ -161,30 +164,43 @@ function renderSubject_set(astr_subject) {
         hemi = hemi_select(hemisphere);
         var str_surfaceFile = hemi.render.surfaceMeshFile;
         var str_scalarFile = hemi.render.functionCurvFile;
+        console.log('renderSubject_set::str_surfaceFile = %s', str_surfaceFile);
+        console.log('renderSubject_set::str_scalarFile  = %s', str_scalarFile);
         if(Xfile_checkAccess(str_surfaceFile) && Xfile_checkAccess(str_scalarFile)) {
             hemi.surface.file = hemi.render.surfaceMeshFile;
             hemi.surface.scalars.file = hemi.render.functionCurvFile;
             hemi.surface.modified();
-            hemi_infoUpdate(hemisphere, _curvLoader.curvFunc);
+            console.log('hemi_infoUpdate(%s)', hemisphere);
+            // Check this for new subject switches!!!
+            hemi_infoUpdate(hemisphere, hemi.defaults.curvLoader.curvFunc);
         } else pageTitle_update = false;
     });
     if(pageTitle_update) {
         pageTitleElement = document.getElementById("title");
         pageTitleElement.innerText = astr_subject;
     }
+    //
+    // Check if a qualifier exists, and if so, update again.
+    ['lh', 'rh'].map(function(hemisphere) {
+        hemi = hemi_select(hemisphere);
+        if(hemi.render.functionCurvQualifier.length)
+            hemiCurvQualifier_act(hemisphere, hemi.render.functionCurvQualifier);
+    });    
+    console.log('renderSubject_set::END');
 }
-
 
 function guiMesh_init(astr_hemi) {
     hemi = hemi_select(astr_hemi);
     hemi.gui.mesh.folder = DATgui.addFolder(str_hemi + ' Hemisphere Mesh');
     hemi.gui.mesh.surfaceCombobox = hemi.gui.mesh.folder.add(
-                        _surfLoader,
+                        hemi.defaults.surfLoader,
                         'surfMesh',
                         meshTypes);
     hemi.gui.mesh.surfaceCombobox.onChange(function(value){
             hemiMeshFunc_act(astr_hemi, value);
             });
+    // Has an "override" been specified in the URL?
+    if(hemi.render.visible == '0') hemi.surface.visible = false;
     hemi.gui.mesh.visible = hemi.gui.mesh.folder.add(hemi.surface, 'visible');
     hemi.gui.position = {
             positionX:    0,
@@ -217,19 +233,23 @@ function guiCurvature_init(astr_hemi) {
     hemi.gui.curvature.folder = DATgui.addFolder(str_hemi + 
                                 ' Hemisphere Curvature');
     hemi.gui.curvature.baseSurface = hemi.gui.curvature.folder.add(
-                            _curvBase,
+                            hemi.defaults.curvBase,
                             'base');
     hemi.gui.curvature.baseSurface.onFinishChange(function(value) {
             hemiCurvBase_act(astr_hemi, value);
             });
+    // Has an "override" been specified in the URL?
+    if(hemi.render.functionCurvQualifier.length) {
+        hemiCurvQualifier_process(astr_hemi);
+    }
     hemi.gui.label.textInput = hemi.gui.curvature.folder.add(
-                            _curvQualifier, 'qualifier');
+                            hemi.defaults.curvQualifier, 'qualifier');
     hemi.gui.label.textInput.onFinishChange(function(value) {
             console.log('Setting internal curvature map to ' + value);
             hemiCurvQualifier_act(astr_hemi, value);
           });      
     hemi.gui.curvature.funcCombobox = hemi.gui.curvature.folder.add(
-                            _curvLoader, 
+                            hemi.defaults.curvLoader, 
                             'curvFunc', 
                             curvatureTypes);
     hemi.gui.curvature.funcCombobox.onChange(function(value) {
@@ -237,33 +257,43 @@ function guiCurvature_init(astr_hemi) {
             console.log('Selected value = ' + value);
             hemiCurvFunc_act(astr_hemi, value);
             });
-    
-    hemi.gui.curvature.minColorSelector = hemi.gui.curvature.folder.addColor(
+    hemi.gui.curvature.interpolationCombobox = hemi.gui.curvature.folder.add(
+            hemi.defaults.interpolationLoader,
+            'interpolation',
+            interpolationSchemes);
+    hemi.gui.curvature.interpolationCombobox.onChange(function(value) {
+        hemiInterpolation_act(astr_hemi, value);
+        });
+    console.log('%s: in guiCurvature_init... interpolation = %d', astr_hemi, hemi.surface.scalars.interpolation);
+    if(hemi.surface.scalars.interpolation <= 1) {
+        hemi.gui.curvature.minColorSelector = hemi.gui.curvature.folder.addColor(
                         hemi.surface.scalars, 
                           'minColor');
-    hemi.gui.curvature.maxColorSelector = hemi.gui.curvature.folder.addColor(
+        hemi.gui.curvature.maxColorSelector = hemi.gui.curvature.folder.addColor(
                         hemi.surface.scalars, 
                           'maxColor');
+    }
     hemi.gui.curvature.minThresholdSelector = hemi.gui.curvature.folder.add(
                         hemi.surface.scalars, 
                           'lowerThreshold',
-                          -10, 0);
-//                        hemi.surface.scalars.min,
-//                        hemi.surface.scalars.max);
+//                          -10, 0);
+                        hemi.surface.scalars.min,
+                        hemi.surface.scalars.max);
     hemi.gui.curvature.maxThresholdSelector = hemi.gui.curvature.folder.add(
                         hemi.surface.scalars, 
                           'upperThreshold',
-                          0, 10);
-//                        hemi.surface.scalars.min,
-//                        hemi.surface.scalars.max);
-    hemi.gui.curvature.folder.open();
+//                          0, 10);
+                        hemi.surface.scalars.min,
+                        hemi.surface.scalars.max);
+    if(hemi.render.visible == "1") hemi.gui.curvature.folder.open();
 }
 
 
 function guiLabel_init(astr_hemi) {
       hemi = hemi_select(astr_hemi);
       hemi.gui.label.folder = DATgui.addFolder(str_hemi + ' Hemisphere Label');
-      hemi.gui.label.textInput = hemi.gui.label.folder.add(_label, 'label');
+      hemi.gui.label.textInput = hemi.gui.label.folder.add(
+                  hemi.defaults.label, 'label');
       //hemi.gui.label.folder.open();
 
       hemi.gui.label.textInput.onFinishChange(function(value) {
@@ -275,6 +305,18 @@ function guiLabel_init(astr_hemi) {
 //
 // Call back functions to service GUI-related events
 //
+
+function hemiName_fix(astr_hemi) {
+    // Due to a bad initial design, we need to be consistent in 
+    // the way hemispheres are identified.
+    switch(astr_hemi) {
+        case 'Left':    astr_hemi = 'lh';
+                        break;
+        case 'Right':    astr_hemi = 'rh';
+                        break;
+    }
+    return astr_hemi;
+}
 
 //
 // Mesh position modification callback
@@ -311,40 +353,8 @@ function hemiMeshFunc_act(astr_hemi, value) {
 // Curvature mesh base callback
 //
 function hemiCurvBase_act(astr_hemi, value) {
-    switch(astr_hemi) {
-    case 'Left':    astr_hemi = 'lh';
-                    break;
-    case 'Right':    astr_hemi = 'rh';
-                    break;
-    }
+    astr_hemi  = hemiName_fix(astr_hemi);
     S_render_baseCurve_set(astr_hemi, value);
-    curvatureFiles = [     S_render[astr_hemi].allCurvFile.H,
-                           S_render[astr_hemi].allCurvFile.K,
-                           S_render[astr_hemi].allCurvFile.K1,                        
-                           S_render[astr_hemi].allCurvFile.K2,
-                           S_render[astr_hemi].allCurvFile.S,
-                           S_render[astr_hemi].allCurvFile.BE,
-                           S_render[astr_hemi].allCurvFile.C ];
-}
-
-//
-// Curvature qualifier callback
-//
-function hemiCurvQualifier_act(astr_hemi, avalue) {
-    switch(astr_hemi) {
-    case 'Left':    astr_hemi = 'lh';
-                    break;
-    case 'Right':    astr_hemi = 'rh';
-                    break;
-    }
-    S_render_curvQualifier_set(astr_hemi, avalue);
-    curvatureFiles = [     S_render[astr_hemi].allCurvFile.H,
-                           S_render[astr_hemi].allCurvFile.K,
-                           S_render[astr_hemi].allCurvFile.K1,                        
-                           S_render[astr_hemi].allCurvFile.K2,
-                           S_render[astr_hemi].allCurvFile.S,
-                           S_render[astr_hemi].allCurvFile.BE,
-                           S_render[astr_hemi].allCurvFile.C ];
     // We need to now refresh the curvature display. This essentially
     // means simulating a curvFunc selection; the "trick" is that
     // the hemicurvFunct_act method needs to be called with the 
@@ -352,6 +362,54 @@ function hemiCurvQualifier_act(astr_hemi, avalue) {
     funcName = curvatureTypes[0];
     for(var rec in curvatureIndexLookup) {
         console.log(curvatureIndexLookup[rec] + '\t' + S_render[astr_hemi]['functionCurv']);
+        if(curvatureIndexLookup[rec] == S_render[astr_hemi]['functionCurv']) {
+            funcName = curvatureTypes[rec];
+            break;
+        }
+    }
+    console.log('Calling hemiCurvFunc_act on ' + funcName);
+    hemiCurvFunc_act(astr_hemi, funcName);
+}
+
+//
+// Curvature qualifier callback
+//
+
+function hemiCurvQualifier_process(astr_hemi) {
+    astr_hemi = hemiName_fix(astr_hemi);
+    hemi = hemi_select(astr_hemi);
+    var str_qualifier = hemi.render.functionCurvQualifier;
+    var str_surfaceFile = hemi.render.surfaceMeshFile;
+    var str_scalarFile = hemi.render.functionCurvFile;
+    str_qualifier = hemi.render.functionCurvQualifier;
+    _curvQualifier.qualifier = hemi.render.functionCurvQualifier;
+    // Now, reset the functionQualifier
+    console.log('Resetting qualifier and triggering reload...');
+    console.log('str_qualifier = %s', str_qualifier);
+    console.log('str_surfaceFile = %s', str_surfaceFile);
+    console.log('str_scalarFile = %s', str_scalarFile);
+    hemi.render.functionCurvQualifier = '';
+    if(Xfile_checkAccess(str_surfaceFile) && Xfile_checkAccess(str_scalarFile)) {
+        hemiCurvQualifier_act(astr_hemi, str_qualifier);
+        hemi.surface.file = hemi.render.surfaceMeshFile;
+        hemi.surface.scalars.file = hemi.render.functionCurvFile;
+        hemi.surface.modified();
+        console.log('Processing default overlay hemi_infoUpdate...');
+        console.log(hemi);
+    }
+}
+
+function hemiCurvQualifier_act(astr_hemi, avalue) {
+    astr_hemi = hemiName_fix(astr_hemi);
+    console.log('Calling S_render_curvQualifier_set with avalue = %s', avalue);
+    S_render_curvQualifier_set(astr_hemi, avalue);
+    // We need to now refresh the curvature display. This essentially
+    // means simulating a curvFunc selection; the "trick" is that
+    // the hemicurvFunct_act method needs to be called with the 
+    // drop down function name.
+    funcName = curvatureTypes[0];
+    for(var rec in curvatureIndexLookup) {
+        //console.log(curvatureIndexLookup[rec] + '\t' + S_render[astr_hemi]['functionCurv']);
         if(curvatureIndexLookup[rec] == S_render[astr_hemi]['functionCurv']) {
             funcName = curvatureTypes[rec];
             break;
@@ -393,7 +451,7 @@ function hemiCurvFunc_act(astr_hemi, value) {
     
         console.log("Sending modified() event on " + hemi.surface.scalars.file);
         hemi.surface.modified();
-    
+        
         xrender.onShowtime = function() {
             hemi_infoUpdate(astr_hemi, value);
         };
@@ -412,10 +470,29 @@ function hemiCurvFunc_act(astr_hemi, value) {
 }
 
 //
+// Curvature color interpolation callback
+//
+function hemiInterpolation_act(astr_hemi, value) {
+    hemi = hemi_select(astr_hemi);
+    console.log('In interpolationCombobox for %s', hemi.render.name);
+    console.log('astr_hemi = %s, value = %s, current scheme index = %d', astr_hemi, value, hemi.surface.scalars.interpolation);
+    for(var rec in interpolationSchemes) {
+        if(interpolationSchemes[rec] == value) {
+            hemi.surface.scalars.interpolation = 
+                interpolationCodes[rec];
+            hemi.render.colorInterpolation = rec;
+            break;
+        }
+    }
+    GUI_build();
+}
+
+//
 // Label specification callback
 //
 function hemiLabel_act(astr_hemi, value) {
     hemi = hemi_select(astr_hemi);
+    hemi.render.label = value;
     var str_labelFile = hemi.render.labelPath + value + '.label';
     if(Xfile_checkAccess(str_labelFile)) {
         hemi.surface.scalars.file = hemi.render.labelPath + value + '.label';
@@ -428,6 +505,8 @@ function hemiLabel_act(astr_hemi, value) {
 // after all the mesh and curvature files have been loaded.
 GUI_build = function() {
 
+    var GUI_buildf = this;
+    
     // A housekeeping static counter
     if (typeof this._counter == 'undefined') this._counter = 0;
     this._counter = this._counter + 1;
@@ -455,24 +534,16 @@ GUI_build = function() {
                             'S',
                             'BE',
                             'C'];
+
+    // Color interpolation options
+    interpolationSchemes = [ 'XTK default',
+                             'FreeSurfer',
+                             'Terrain'];
+    interpolationCodes   = [ 0,
+                             1,
+                             2];
     
-    // These are the string names of actual files, like 'smoothwm.H'
-    // and since they are the same names for the lh and rh, we use the
-    // lh parts of the S_render structure here to define the names.
-    curvatureFiles = [     S_render.lh.allCurvFile.H,
-                           S_render.lh.allCurvFile.K,
-                           S_render.lh.allCurvFile.K1,                        
-                           S_render.lh.allCurvFile.K2,
-                           S_render.lh.allCurvFile.S,
-                           S_render.lh.allCurvFile.BE,
-                           S_render.lh.allCurvFile.C ];
-
-    if(this._counter == 1) {
-        console.log('INTIAL: updating hemi in onShowtime()');
-        hemi_infoUpdate('Left',  _curvLoader.curvFunc);
-        hemi_infoUpdate('Right', _curvLoader.curvFunc);
-    }
-
+    
     if (DATgui) {
         // if we already have a gui, destroy it
         // .. it will be re-created immediately
@@ -484,11 +555,14 @@ GUI_build = function() {
     // Create the main GUI panel on the right
     //
     DATgui = new dat.GUI();
+    
+    // Make sure that for building, the functionCurvQualifier is set to
+    // empty
       
     // Now build the GUI, element-by-element
-    _gui.subject.folder = DATgui.addFolder('Subject');
-    _gui.subject.nameCombobox = _gui.subject.folder.add(_subjectLoader, 
-                              'subjectName', subjectArr);
+    _gui.subject.folder         = DATgui.addFolder('Subject');
+    _gui.subject.nameCombobox   = _gui.subject.folder.add(_subjectLoader, 
+                                      'subjectName', subjectArr);
     //_gui.subject.folder.open();
 
     // 
@@ -499,8 +573,23 @@ GUI_build = function() {
     });
     
     ['Left', 'Right'].map( function(hemi) {
+        h = hemiName_fix(hemi);
+        setup = hemi_select(hemi);
+        setup.defaults.surfLoader.surfMesh  = setup.render.surfaceMesh;
+        setup.defaults.curvBase.base        = setup.render.surfaceCurv;
+        setup.defaults.curvQualifier.qualifier = setup.render.functionCurvQualifier;
+        setup.defaults.interpolationLoader.interpolation =
+                interpolationSchemes[setup.render.colorInterpolation];
+        setup.defaults.curvLoader.curvFunc  = curvatureTypes[curvatureIndexLookup.indexOf(setup.render.functionCurv)];
+        setup.defaults.label.label          = setup.render.label;
+        
+        if(GUI_buildf._counter == 1) {
+            console.log('GUI_build::INITIAL: updating hemi');
+            hemi_infoUpdate(hemi, setup.defaults.curvLoader.curvFunc);
+        }
+        
         guiMesh_init(hemi);
-          guiCurvature_init(hemi);
-          guiLabel_init(hemi);
+        guiCurvature_init(hemi);
+        guiLabel_init(hemi);
      });
 };
