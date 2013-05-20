@@ -41,7 +41,7 @@
 function hid_select(astr_hemi) {
     str_id = '';
     __htmlEl = null;
-    console.log(astr_hemi);
+    //console.log(astr_hemi);
     switch(astr_hemi) {
     case 'Left': case 'lh':
         __htmlEl = hid.lh;
@@ -80,7 +80,12 @@ function hemi_infoUpdate(astr_hemi, curvFuncVal) {
     // We need to copy and then filter the scalars.array
     // according to the min/max values
     //var arr_scalars = hemi.surface.scalars.array.subarray(0);
-    var arr_scalars = hemi.surface.scalars.array.copy();
+    try{
+        var arr_scalars = hemi.surface.scalars.array.copy();
+    } catch(e) {
+        console.log('Unable to copy scalar array info for hemisphere ->%s<-, curvature ->%s<-', astr_hemi, curvFuncVal);
+        return;
+    }
     // Now bandpass filter between the min/max values of the 
     // thresholded values...
     var f_min = hemi.surface.scalars.min;
@@ -95,8 +100,10 @@ function hemi_infoUpdate(astr_hemi, curvFuncVal) {
           html.hemi[key].innerHTML = hemi.surface.scalars.array.length;
           break;
       case 'curvFunc':
-         var _index = curvatureTypes.indexOf(curvFuncVal);
-          html.hemi[key].innerHTML = curvatureFiles[_index];
+          var _index = curvatureTypes.indexOf(curvFuncVal);
+          console.log('hemi_infoUpdate::hemi = %s, curvFunc = %s', astr_hemi, curvFuncVal);
+          console.log('hemi_infoUpdate::hemi = %s, _index = %s', astr_hemi, curvFuncVal);
+          html.hemi[key].innerHTML = hemi.render.allCurvFile[curvatureIndexLookup[_index]];
           break;
       case 'negCount':
           html.hemi[key].innerHTML = s_stats.negCount.toFixed(0);
