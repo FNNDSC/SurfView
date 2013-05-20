@@ -90,13 +90,20 @@ function subject_set(astr_path, astr_subject, aindex) {
 // Change the curvature qualifier in the S_render object
 //
 function S_render_curvQualifier_set(astr_hemi, astr_qualifier) {
+    switch(astr_hemi) {
+        case 'Left':    astr_hemi = 'lh'; break;
+        case 'Right':   astr_hemi = 'rh'; break;
+    }
     var str_qualifierCurrent = S_render[astr_hemi]['functionCurvQualifier'];
     var str_fullQualifier = '.' + str_qualifierCurrent;
     var str_qualifierNew = '.' + astr_qualifier;
     var S_curvFile = S_render[astr_hemi]['allCurvFile'];
+    console.log('In S_render_curvQualifier');
     for(var rec in S_curvFile) {
         if(S_curvFile.hasOwnProperty(rec)) {
-            S_curvFile[rec] = S_curvFile[rec].replace(str_fullQualifier, str_qualifierNew);
+            str_curvatureNew     = str_qualifierNew + rec;
+            str_curvatureCurrent = str_fullQualifier + rec;
+            S_curvFile[rec] = S_curvFile[rec].replace(str_curvatureCurrent, str_curvatureNew);
             console.log(S_curvFile[rec]);
         }
     }
@@ -130,7 +137,7 @@ function S_render_Xoffset(astr_hemi) {
     // Make sure about the 'Left'/'lh' 'Right'/'rh' duality
     switch(astr_hemi) {
         case 'Left':    astr_hemi = 'lh'; break;
-        case 'Right':    astr_hemi = 'rh'; break;
+        case 'Right':   astr_hemi = 'rh'; break;
     }
     var offset = 0;
     switch(S_render[astr_hemi].surfaceMesh) {
@@ -192,17 +199,19 @@ function hemi_select(astr_hemi) {
   surface = null;
   switch(astr_hemi) {
   case 'Left': case 'lh':
-       __gui = _gui.lh;
-       str_hemi = 'Left';
-       surface = S_mesh.lh;
-       render = S_render.lh;
+       __gui        = _gui.lh;
+       str_hemi     = 'Left';
+       surface      = S_mesh.lh;
+       render       = S_render.lh;
+       defaults     = _initial.lh;
        break;
   case 'Right': case 'rh':
-       __gui = _gui.rh;
-       str_hemi = 'Right';
-       surface = S_mesh.rh;
-       render = S_render.rh;
+       __gui        = _gui.rh;
+       str_hemi     = 'Right';
+       surface      = S_mesh.rh;
+       render       = S_render.rh;
+       defaults     = _initial.rh;
        break;
   }
-  return {gui : __gui, surface : surface, render : render};
+  return {gui : __gui, surface : surface, render : render, defaults : defaults};
 }
