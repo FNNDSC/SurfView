@@ -70,22 +70,26 @@ include 'SurfView/fs_dirsParse.php';
 
 <!-- <script type="text/javascript" src='scripts/jquery.js'></script> -->
 
-<script type="text/javascript" src="http://get.goXTK.com/xtk_xdat.gui.js"></script>
-<script type="text/javascript" src="http://get.goXTK.com/xtk_edge.js "></script>
+<!-- Uncomment the following for remote Xtk usage: -->
+<!-- comment_start -->
+<!-- <script type="text/javascript" src="http://get.goXTK.com/xtk_edge.js "></script> -->
+<!-- comment_end -->
 
-<!-- <script type="text/javascript" src="X/lib/closure-library/closure/goog/base.js"></script> -->
-<!-- <script type="text/javascript" src="X/xtk-deps.js"></script> -->
+<!-- Uncomment the following for local Xtk usage: -->
+<!-- comment_start -->
+<script type="text/javascript" src="X/lib/google-closure-library/closure/goog/base.js"></script>
+<script type="text/javascript" src="X/xtk-deps.js"></script>
+<script type="text/javascript" src="X/X.js"></script>
+<!-- comment_end -->
 
 <!-- Highcharts and friends -->
 <script src="SurfView/highcharts/js/highcharts.js" type="text/javascript"></script>
 
-<!-- <script type="text/javascript" src="http://get.goXTK.com/xtk.js "></script> -->
-
 <script type="text/javascript">
 
     // The following is required when connecting to a local Xtk build
-    //goog.require('X.renderer3D');
-    //goog.require('X.mesh');
+    goog.require('X.renderer3D');
+    goog.require('X.mesh');
 
     // First, the main data components passed over from the PHP processing:
     // The main php data structure
@@ -111,6 +115,8 @@ include 'SurfView/fs_dirsParse.php';
 </script>
 
 <!-- Import the core javascript components of the system -->
+<!-- <script type="text/javascript" src="http://get.goXTK.com/xtk_xdat.gui.js"></script> -->
+<script type="text/javascript" src="SurfView/xtk_xdat.gui.js"></script>
 <script type="text/javascript" src="SurfView/env.js"></script>
 <script type="text/javascript" src="SurfView/hemi_info.js"></script>
 <script type="text/javascript" src="SurfView/page_layout.js"></script>
