@@ -70,19 +70,6 @@ function mesh_init(aS_metaData) {
     return mesh;
 }
 
-Float32Array.prototype.subArray_set = function(a_array, ai_startPos)
-{
-    var i, j;
-    var insertLen   = a_array.length;
-    var thisLen     = this.length;
-    if(ai_startPos + insertLen > thisLen) return;
-
-    j = 0;
-    for(i=ai_startPos; i<ai_startPos+insertLen; i++) {
-        this[i] = a_array[j++];
-    }
-};
-
 
 // XTK model
 window.onload =  function() {
