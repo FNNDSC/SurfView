@@ -538,10 +538,12 @@ GUI_build = function() {
     // Color interpolation options
     interpolationSchemes = [ 'XTK default',
                              'FreeSurfer',
-                             'Terrain'];
+                             'Terrain',
+                             'Hot'];
     interpolationCodes   = [ 0,
                              1,
-                             2];
+                             2,
+                             3];
     
     
     if (DATgui) {
