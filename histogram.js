@@ -61,6 +61,115 @@ function quicksort(array)
     qsort(array, 0, array.length);
 }
 
+
+function nonRecursiveQuickSort(arr, min, max){
+        var Stack = new Array(128); // Stack for array bounds
+        var top = -1;
+        var n = max + 1;
+        var pivot, temp;
+        var pivotindex, l, r, i, j;
+
+        Stack[++top] = min;  // Initialize stack
+        Stack[++top] = max;
+
+        while (top > 0) // While there are unprocessed subarrays 
+        {   
+                // Pop Stack
+                j = Stack[top--];
+                i = Stack[top--];
+
+                // Findpivot
+                pivotindex = i+j >> 1;
+                pivot = arr[pivotindex];
+
+                // Stick pivot at end
+                arr[pivotindex] = arr[j];
+                arr[j] = pivot;
+
+                // Partition
+                l = (i - 1);
+                r = j;
+                do 
+                {
+                        while (arr[++l] < pivot);
+                        while ((r!=0) && (arr[--r] > pivot));
+                        temp = arr[l];
+                        arr[l] = arr[r];
+                        arr[r] = temp;
+                } while (l < r);
+
+                // Undo final swap
+                temp = arr[l];
+                arr[l] = arr[r];
+                arr[r] = temp;
+
+                // Put pivot value in place
+                temp = arr[l];
+                arr[l] = arr[j];
+                arr[j] = temp;
+
+                // Put new subarrays onto Stack if they are small
+                if ((l-i) > 10) // Left partition / 10 could be adjusted from 0 - ...
+                {
+                        Stack[++top] = i;
+                        Stack[++top] = (l-1);
+                }
+
+                if ((j-l) > 10) // Right partition / 10 could be adjusted from 0 - ...
+                {
+                    Stack[++top] = (l+1);
+                    Stack[++top] = j;
+                }
+        }
+
+        for(j = 1; j < n; ++j)
+        {
+                temp = arr[j];
+                i = j - 1;
+                while(i >= 0 && arr[i] > temp)
+                        arr[i+1] = arr[i--];
+                arr[i+1] = temp;
+        }
+}
+
+
+function qsort2(arr)
+{
+    var stack = [arr];
+    var sorted = [];
+ 
+    while (stack.length) {
+ 
+        var temp = stack.pop(), tl = temp.length;
+ 
+        if (tl == 1) {
+            sorted.push(temp[0]);
+            continue;
+        }
+        var pivot = temp[0];
+        var left = [], right = [];
+ 
+        for (var i = 1; i < tl; i++) {
+            if (temp[i] < pivot) {
+                left.push(temp[i]);
+            } else {
+                right.push(temp[i]);
+            }
+        }
+ 
+        left.push(pivot);
+ 
+        if (right.length)
+            stack.push(right);
+        if (left.length)
+            stack.push(left);
+ 
+    }
+//    console.log(sorted);
+    return sorted;
+}
+
+
 function arr_copy(arr_source, arr_target) {
     arr_target = new Float32Array(arr_source.length);
     for(var i=0, len=arr_source.length; i<len; i++) {
@@ -126,17 +235,18 @@ Array.prototype.scale = function(f_scale) {
  * 
  */
 function histogram_calculate(arr_data, nbins) {
-    var arr_sorted      = arr_data.copy();
-    quicksort(arr_sorted);
+    arr_sorted      = arr_data.copy();
+    //quicksort(arr_sorted);
+    nonRecursiveQuickSort(arr_sorted, 0, arr_sorted.length-1);
     var f_min           = arr_sorted[0];
     var f_max           = arr_sorted[arr_sorted.length-1];
     var f_range         = f_max - f_min;
     var f_binSpan       = f_range / nbins;
     
     // Return arrays
-    var arr_binOffset   = [];    // 'x-axis' values, [x1, x2, ... xn]
-    var arr_binValue    = [];    // 'y-axis' values, [y1, y2, ... yn]
-    var arr_xy          = [];    // a 'merged' array of [[x1, y1], ... [xn, yn]]
+    arr_binOffset   = [];    // 'x-axis' values, [x1, x2, ... xn]
+    arr_binValue    = [];    // 'y-axis' values, [y1, y2, ... yn]
+    arr_xy          = [];    // a 'merged' array of [[x1, y1], ... [xn, yn]]
     
     var j=0;
     for(j=0; j<nbins; j++) {
@@ -164,9 +274,9 @@ function histogram_calculate(arr_data, nbins) {
 
 function histogram_draw(astr_canvasID, arr_xy) {
 
-    var canvas         = document.getElementById(astr_canvasID);
-    var f_xrange     = canvas.clientWidth;
-    var f_yrange     = canvas.clientHeight;
+    var canvas          = document.getElementById(astr_canvasID);
+    var f_xrange        = canvas.clientWidth;
+    var f_yrange        = canvas.clientHeight;
     
     var hchart = new Highcharts.Chart({
         credits: {
